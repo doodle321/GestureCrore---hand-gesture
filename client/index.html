@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HandGesture - Touchless HCI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/+esm"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <h1>🖐️ HandGesture</h1>
+            <div id="network-status" class="status-badge disconnected">
+                <span class="status-dot"></span>
+                <span class="status-text">Disconnected</span>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="video-container">
+                <video id="webcam" autoplay playsinline muted></video>
+                <canvas id="overlay"></canvas>
+                <div id="gesture-label" class="gesture-label">No hand detected</div>
+                <div id="loading" class="loading-overlay">
+                    <div class="spinner"></div>
+                    <p>Initializing MediaPipe...</p>
+                </div>
+            </div>
+            <aside class="controls-panel">
+                <h2>Settings</h2>
+                <div class="control-group">
+                    <label for="camera-select">Camera</label>
+                    <select id="camera-select">
+                        <option value="">Default Camera</option>
+                    </select>
+                    <button id="refresh-cameras-btn" class="btn-small">🔄 Refresh</button>
+                </div>
+                <div class="control-group">
+                    <label for="cursor-speed">Cursor Speed</label>
+                    <input type="range" id="cursor-speed" min="0.5" max="3" step="0.1" value="1.5">
+                    <span class="value-display" id="cursor-speed-val">1.5x</span>
+                </div>
+                <div class="control-group">
+                    <label for="click-threshold">Click Pinch Distance</label>
+                    <input type="range" id="click-threshold" min="0.02" max="0.1" step="0.005" value="0.04">
+                    <span class="value-display" id="click-threshold-val">0.04</span>
+                </div>
+                <div class="control-group">
+                    <label for="smoothing">Smoothing Frames</label>
+                    <input type="range" id="smoothing" min="1" max="10" step="1" value="5">
+n                    <span class="value-display" id="smoothing-val">5</span>
+                </div>
+                <div class="control-group">
+                    <label for="cooldown">Gesture Cooldown (ms)</label>
+                    <input type="range" id="cooldown" min="100" max="1000" step="50" value="300">
+                    <span class="value-display" id="cooldown-val">300ms</span>
+                </div>
+                <div class="control-group">
+                    <label for="server-host">Server Host</label>
+                    <input type="text" id="server-host" value="127.0.0.1" placeholder="192.168.x.x">
+                    <span class="hint">Default: localhost</span>
+                </div>
+                <div class="control-group">
+                    <label for="server-port">WebSocket Port</label>
+                    <input type="number" id="server-port" value="8080" min="1024" max="65535">
+                </div>
+                <button id="connect-btn" class="btn-primary">Connect to Server</button>
+                <button id="toggle-camera-btn" class="btn-secondary">Stop Camera</button>
+                <div class="debug-panel">
+                    <h3>🔍 Debug</h3>
+                    <div class="debug-row"><span>Gesture:</span> <span id="debug-gesture">—</span></div>
+                    <div class="debug-row"><span>WS Status:</span> <span id="debug-ws">—</span></div>
+                    <div class="debug-row"><span>Last Action:</span> <span id="debug-sent">—</span></div>
+                    <div class="debug-row"><span>Laser:</span> <span id="debug-cursor">—</span></div>
+                    <div class="debug-log" id="debug-log"></div>
+                </div>
+                <div class="gesture-legend">
+                    <h3>Gesture Guide</h3>
+                    <ul>
+                        <li><span class="gesture-icon">☝️</span> <strong>Laser Pointer</strong> — Index up, others folded</li>
+                        <li><span class="gesture-icon">✌️</span> <strong>Scroll Up/Down</strong> — Index & middle up</li>
+                        <!--<li><span class="gesture-icon">👋</span> <strong>Back/Forward</strong> — Swipe left/right</li>
+                        <li><span class="gesture-icon">👆</span> <strong>Scroll</strong> — Swipe up/down</li>
+                        <li><span class="gesture-icon">🤏</span> <strong>Zoom</strong> — Pinch distance while stationary</li>-->
+                        <li><span class="gesture-icon">✊</span> <strong>Fullscreen</strong> — Close fist</li>
+                    </ul>
+                </div>
+            </aside>
+        </main>
+        <footer class="app-footer">
+            <p>HandGesture v1.0 — Local Touchless HCI System</p>
+        </footer>
+    </div>
+    <div id="laser-pointer"></div>
+    <div id="zoom-indicator">Zoom: 100%</div>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
