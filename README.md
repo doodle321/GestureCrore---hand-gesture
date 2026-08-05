@@ -31,14 +31,11 @@ GestureCrore is an offline-first, local-network Human-Computer Interaction (HCI)
 GestureCrore/
 ├── client/              # Frontend web app
 │   ├── index.html       # Main UI
-│   ├── js/
-│   │   ├── vision.js        # MediaPipe hand tracking
-│   │   ├── gestures.js      # Gesture recognition engine
-│   │   ├── app.js           # Application logic & UI bindings
-│   │   └── websocket.js     # WebSocket client
-│   ├── manifest.json    # Browser extension manifest
-│   ├── background.js
-│   └── content.js
+│   └── js/
+│       ├── vision.js        # MediaPipe hand tracking
+│       ├── gestures.js      # Gesture recognition engine
+│       ├── app.js           # Application logic & UI bindings
+│       └── websocket.js     # WebSocket client
 ├── server/              # Backend Node.js server
 │   ├── index.js         # HTTPS + WebSocket server entry
 │   ├── socketServer.js  # WebSocket message handler
