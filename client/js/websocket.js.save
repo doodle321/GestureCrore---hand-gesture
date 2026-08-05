@@ -1,0 +1,100 @@
+                        this.emit('message', data);
+                    } catch (e) {
+                        console.warn('[WebSocket] Invalid JSON received:', event.data);
+                    }
+                };
+
+                this.ws.onerror = (err) => {
+                    console.error('[WebSocket] Error event fired:', err);
+                    if (!resolved) {
+                        resolved = true;
+                        clearTimeout(timeout);
+                        this.emit('statusChange', 'disconnected');
+                        reject(new Error(`Could not connect to ${url}. Check that the server is running.`));
+                    }
+                };
+
+                this.ws.onclose = () => {
+                    console.log('[WebSocket] Connection closed');
+                    if (!resolved) {
+                        resolved = true;
+                        clearTimeout(timeout);
+                        this.emit('statusChange', 'disconnected');
+                        reject(new Error('Connection closed immediately. Server may not be running.'));
+                    } else {
+                        this.status = 'disconnected';
+                        this.emit('statusChange', 'disconnected');
+                        this.attemptReconnect();
+                    }
+                };
+
+            } catch (err) {
+                console.error('[WebSocket] Exception during connection:', err);
+                if (!resolved) {
+                    resolved = true;
+                    reject(err);
+                }
+            }
+        });
+    }
+
+    disconnect() {
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
+        this.status = 'disconnected';
+        this.emit('statusChange', 'disconnected');
+    }
+
+    attemptReconnect() {
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            console.warn('[WebSocket] Max reconnect attempts reached');
+            return;
+        }
+        this.reconnectAttempts++;
+        this.status = 'reconnecting';
+        this.emit('statusChange', 'reconnecting');
+        console.log(`[WebSocket] Reconnecting in ${this.reconnectDelay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+        setTimeout(() => {
+            this.connect(this.host, this.port).catch(() => {});
+        }, this.reconnectDelay);
+    }
+
+    send(eventType, data) {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+            return false;
+        }
+        const payload = {
+            event: eventType,
+            data: data,
+            timestamp: Date.now()
+        };
+        try {
+            this.ws.send(JSON.stringify(payload));
+            return true;
+        } catch (err) {
+            console.error('[WebSocket] Send failed:', err);
+            return false;
+        }
+    }
+
+    on(event, callback) {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, []);
+        }
+        this.listeners.get(event).push(callback);
+    }
+
+    off(event, callback) {
+        if (!this.listeners.has(event)) return;
+        const callbacks = this.listeners.get(event);
+        const idx = callbacks.indexOf(callback);
+        if (idx > -1) callbacks.splice(idx, 1);
+    }
+
+    emit(event, data) {
+        if (!this.listeners.has(event)) return;
+        this.listeners.get(event).forEach(cb => cb(data));
+    }
+}
