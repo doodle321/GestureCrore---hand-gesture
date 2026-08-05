@@ -1,0 +1,20 @@
+{
+  "name": "handgesture-core",
+  "version": "1.0.0",
+  "description": "Offline-first, local-network Human-Computer Interaction system using hand gestures",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
