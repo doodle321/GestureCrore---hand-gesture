@@ -166,18 +166,6 @@ The web UI exposes these tunable parameters in real time:
 
 ---
 
-## Browser Extension Mode
-
-The `client/manifest.json` allows loading the app as a Chrome/Edge extension:
-
-1. Open `chrome://extensions`
-2. Enable **Developer mode**
-3. Click **Load unpacked**
-4. Select the `client/` folder
-5. The extension injects gesture control into any webpage
-
----
-
 ## Keyboard Shortcuts (Server Terminal)
 
 While the server is running in a TTY:
